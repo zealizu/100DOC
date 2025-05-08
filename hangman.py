@@ -104,6 +104,7 @@ while True:
     #if the player has no lives left, end the game
     if lives == 0:
         print("***********************IT WAS jawbreaker! YOU LOSE**********************")
+        print(f"THE WORD WAS {word.upper}")
         exit()
     #if the player has guessed the word, end the game
     if check_win():
