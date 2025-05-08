@@ -35,6 +35,7 @@ def encrypt(message, shift):
     :return: The encrypted message.
     """
     encrypted_message: str = ""
+    shifted_position = 0
     # Loop through each character in the message
     for i in message:
         # If the character is a space, add it directly to the encrypted message
@@ -44,19 +45,15 @@ def encrypt(message, shift):
             # Loop through the list of letters to find the character
             for j in range(len(letters)):
                 if i == letters[j]:
-                    # If the shifted position exceeds the length of the letters list, wrap around
-                    if j + shift > len(letters) - 1:
-                        encrypted_message += letters[j + shift - len(letters)]
-                    else:
-                        # Otherwise, add the shifted letter
-                        encrypted_message += letters[j + shift]
+                    # Calculate the shifted position and wrap around if necessary
+                    shifted_position = j + shift
+                    shifted_position %= len(letters)  # Ensure the position wraps around
+                    encrypted_message += letters[shifted_position]
+
             # If the character is not in the letters list (e.g., numbers or symbols), add it as is
             if i not in letters:
                 encrypted_message += i
     return encrypted_message
-
-# Example usage of the encrypt function
-encrypt("yzx help 123", 4)
 
 # Function to decrypt a message using Caesar cipher
 def decrypt(message, shift):
@@ -66,6 +63,7 @@ def decrypt(message, shift):
     :param shift: The number of positions to shift each letter back.
     :return: The decrypted message.
     """
+    shifted_position = 0
     decrypted_message: str = ""
     # Loop through each character in the message
     for i in message:
@@ -76,19 +74,14 @@ def decrypt(message, shift):
             # Loop through the list of letters to find the character
             for j in range(len(letters)):
                 if i == letters[j]:
-                    # If the shifted position is less than 0, wrap around
-                    if j - shift < 0:
-                        decrypted_message += letters[j - shift + len(letters)]
-                    else:
-                        # Otherwise, add the shifted letter
-                        decrypted_message += letters[j - shift]
+                    # Calculate the shifted position and wrap around if necessary
+                    shifted_position = j - shift
+                    shifted_position %= len(letters)  # Ensure the position wraps around
+                    decrypted_message += letters[shifted_position]
             # If the character is not in the letters list (e.g., numbers or symbols), add it as is
             if i not in letters:
                 decrypted_message += i
     return decrypted_message
-
-# Example usage of the decrypt function
-decrypt("abcd 123", 4)
 
 # Main program loop to allow the user to repeatedly encode or decode messages
 go_again: bool = True  # Flag to control whether the program should continue running
