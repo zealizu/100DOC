@@ -71,3 +71,9 @@ class Snake:
         segment.pu()  # Lift the pen to avoid drawing lines
         segment.color("white")  # Set the color of the segment to white
         self.snake_body.append(segment)  # Add the new segment to the snake body
+    
+    def reset(self):
+        for i in self.snake_body:
+            i.goto(1000,1000)
+        self.snake_body.clear()
+        self.create_snake()
