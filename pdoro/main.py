@@ -95,6 +95,7 @@ def start_timer():
         # Update label to show "Break" in red color
         timer_label.config(text="Break", fg= RED)
         # Show notification popup
+        os.system("afplay /System/Library/Sounds/Glass.aiff")
         messagebox.showinfo("Pomodoro Timer", "Time's up! Take a break 🍅")
         
     # Check if it's time for a short break (even repetitions, except 8th)
@@ -103,6 +104,7 @@ def start_timer():
         # Update label to show "Break" in pink color
         timer_label.config(text="Break", fg= PINK)
         # Show notification popup
+        os.system("afplay /System/Library/Sounds/Glass.aiff")
         messagebox.showinfo("Pomodoro Timer", "Time's up! Take a break 🍅")
     # Otherwise, it's a work session (odd repetitions)
     else:
@@ -110,6 +112,7 @@ def start_timer():
         # Update label to show "Work" in green color
         timer_label.config(text="Work", fg=GREEN)
         # Show notification popup
+        os.system("afplay /System/Library/Sounds/Glass.aiff")
         messagebox.showinfo("Pomodoro Timer", "Time to get back to work")
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- # 
