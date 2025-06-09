@@ -2,6 +2,7 @@ import random
 import pyperclip
 from tkinter import *
 from tkinter import messagebox
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 # List of possible characters for the password
@@ -35,31 +36,78 @@ def generate_pass():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_pass():
     """
-    Saves the website, username/email, and password to a text file after validation.
+    Saves the website, username/email, and password to a JSON file after validation.
     Shows a warning if any field is empty and asks for confirmation before saving.
+    If the file does not exist, it creates a new one.
     """
-    web_user_input = web_input.get().strip().title()
+    web_user_input = web_input.get().strip().upper()
     name_user_input = name_input.get()
     pass_user_input = pass_input.get()
+    new_data = {
+        web_user_input: {
+            "email": name_user_input,
+            "password": pass_user_input,
+        }
+    }
     
     # Check for empty fields
     if len(web_user_input) == 0 or len(name_user_input) == 0 or len(pass_user_input) == 0:
         messagebox.showwarning(
             title="Empty Field Detected",
-            message="You canot have any empty fields, Please try again"
+            message="You cannot have any empty fields, Please try again"
         )
     else:
         # Ask for confirmation before saving
         is_ok = messagebox.askokcancel(
             title=web_user_input,
-            message=f"These are the details entered: \nEmail/Username: {name_user_input}\nPassword: {pass_user_input}\nis it okay to save? "
+            message=f"These are the details entered: \nEmail/Username: {name_user_input}\nPassword: {pass_user_input}\nIs it okay to save?"
         )
         if is_ok:
-            # Save the details to a file
-            with open("100DOC/pass_gen/data.txt", "a") as file:
-                file.write(f"{web_user_input} | {name_user_input} | {pass_user_input} \n")
+            try:
+                # Try to read existing data
+                with open("100DOC/pass_gen/data.json", "r") as data_file:
+                    data = json.load(data_file)
+                    data.update(new_data)  # Update with new entry
+            except FileNotFoundError:
+                # If file doesn't exist, start with new data
+                data = new_data
+            # Write updated data back to the file
+            with open("100DOC/pass_gen/data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
                 web_input.delete(0, END)  # Clear website entry
                 pass_input.delete(0, END)  # Clear password entry
+
+def get_pass():
+    """
+    Searches for the website in the JSON data file and displays the email and password if found.
+    Shows a warning if the website field is empty, if the website is not found, or if the file does not exist.
+    """
+    website = web_input.get().strip().upper()
+    if len(website) == 0:
+        messagebox.showwarning(
+            title="Empty Field Detected",
+            message="Website field cannot be empty, Please try again"
+        )
+    else:
+        try:
+            # Try to open and read the data file
+            with open("100DOC/pass_gen/data.json", "r") as data_file:
+                data = json.load(data_file)
+                try:
+                    # Show info if website exists in data
+                    messagebox.showinfo(
+                        title=website,
+                        message=f"Email: {data[website]['email']}\nPassword: {data[website]['password']}"
+                    )
+                except KeyError as e:
+                    # Website not found in data
+                    messagebox.showinfo("Website does not exist", f"{e} information is not stored in the database")
+        except FileNotFoundError:
+            # Data file does not exist
+            messagebox.showwarning(
+                title="Save a password",
+                message="There are currently no passwords saved."
+            )
 
 # ---------------------------- UI SETUP ------------------------------- #
 # Create the main window
@@ -76,9 +124,13 @@ canvas.grid(row=0, column=1)
 # Website label and entry
 web_label = Label(text="Website: ")
 web_label.grid(row=1, column=0)
-web_input = Entry(width=38)
-web_input.grid(row=1, column=1, columnspan=2)
+web_input = Entry()
+web_input.grid(row=1, column=1)
 web_input.focus()  # Focus cursor on website entry
+
+# Search button for retrieving saved passwords
+search_btn = Button(text="Search", width=13, command=get_pass)
+search_btn.grid(row=1, column=2)
 
 # Email/username label and entry
 name_label = Label(text="Email/Username: ")
@@ -97,7 +149,7 @@ pass_input.grid(row=3, column=1)
 gen_pass = Button(text="Generate Password", command=generate_pass)
 gen_pass.grid(row=3, column=2)
 
-# Add/save button
+# Add/save button for saving new passwords
 add_btn = Button(text="Add", width=36, command=save_pass)
 add_btn.grid(row=4, column=1, columnspan=2)
 
