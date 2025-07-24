@@ -1,4 +1,8 @@
 # Python
-__pycache__/
+__pycache__
+ReadyToSend
+.sass-cache
+.project_config
+*.db
 *.pyc
 *.env
